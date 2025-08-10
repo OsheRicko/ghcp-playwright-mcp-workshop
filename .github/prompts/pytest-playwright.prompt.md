@@ -1,7 +1,6 @@
 ---
-mode: 'agent'
+mode: 'edit'
 description: 'Convert Playwright script into Pytest-Playwright compatible format'
-tools: ['codebase', 'editFiles', 'runCommands', 'search', 'testFailure', 'terminalLastCommand']
 ---
 
 # Task: Playwright Script to Pytest-Playwright Conversion
@@ -18,7 +17,7 @@ The current test script:
 - pytest configuration is set up in `pytest.ini`
 
 ## Goal
-Refactor the test script into a **pytest-playwright** compatible format, using the `pytest-playwright` plugin’s fixtures and conventions.
+Refactor the test script into a **pytest-playwright** compatible format, using the `pytest-playwright` plugin for better browser management and report generation.
 
 ## Target Format
 The refactored test:
@@ -57,27 +56,44 @@ def run_test(playwright, browser_name):
 ## Expected Output Format
 
 ```python
+import re
 import pytest
 from playwright.sync_api import Page, expect
+import logging
 import os
-import re
 
-def test_example_domain(page: Page, browser_name: str):
+def test_example_domain(page: Page, browser_name: str, base_url: str):
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
+    logger = logging.getLogger("example_pytest")
     try:
-        page.goto("https://example.com/")
+        logger.info(f"Navigating to example.com on browser: {browser_name} with base URL: {base_url}")
+        page.goto(f"{base_url}/")
+        logger.info("Checking visibility of 'Example Domain' heading")
         expect(page.get_by_role("heading", name="Example Domain")).to_be_visible()
+        logger.info("Clicking on text 'This domain is for use in'")
         page.get_by_text("This domain is for use in").click()
+        logger.info("Clicking on 'More information...' link")
         page.get_by_role("link", name="More information...").click()
+        logger.info("Verifying redirection to IANA website")
+        # expect(page).to_have_url(re.compile(r"https?://www\.iana\.org/help/example-domains"))
         expect(page).to_have_url("https://www.iana.org/help/example-domains")
+        logger.info("Waiting for network to be idle")
         page.wait_for_load_state("networkidle")
-    except Exception:
-        os.makedirs("report/scrennshot", exist_ok=True)
-        page.screenshot(path="report/scrennshot/error_pytest_{browser_name}.png")
+    except Exception as e:
+        logger.error(f"Test failed on browser {browser_name}: {e}")
+        screenshot_dir = os.path.join("report", "screenshot")
+        os.makedirs(screenshot_dir, exist_ok=True)
+        screenshot_path = os.path.join(screenshot_dir, f"error_pytest_{browser_name}.png")
+        page.screenshot(path=screenshot_path)
+        logger.error(f"Screenshot saved to {screenshot_path}")
         raise
-
 ```
 
 ## Key Changes to Make
+- Add logging for clarity which includes:
+    - Before each action (e.g., navigating to a URL, clicking a link)
+    - On error, when taking a screenshot
+- Logging level should be set to INFO for normal operations and ERROR for exceptions.
 - Replace the manual playwright.chromium/... code with the built-in page fixture
 - Use pytest-style function: def test_...()
 - Remove manual loop over browsers — rely on pytest-playwright to handle multiple browsers (CLI param --browser)
@@ -88,7 +104,7 @@ def test_example_domain(page: Page, browser_name: str):
 ## Notes
 - Do not modify the `pytest.ini` file, it is already set up for pytest-playwright.
 - Don not modify the provided test scripts, always create new files for the refactored tests, file name could be <provided-file-name>_pytest.
-- Ask the user for the URL to test first if not provided in the script.
+- Ask user for the base URL to use in the test, which will be passed as a command line argument.
 - Pytest-playwright manages browser lifecycle automatically, so don’t include context.close() or browser.close() manually.
 - The test runner (e.g. GitHub Actions) can pass in --browser flag to run across all browsers.
 - Regex allows more flexibility (e.g. http/https support, domain variations) and is recommended for URL matching in dynamic web environments.
@@ -97,7 +113,7 @@ def test_example_domain(page: Page, browser_name: str):
 At the end of the conversion, always provide the user with a ready-to-run pytest command like the following:
 
 ```
-pytest <scenario>-pytest.py --junitxml=report\xml\<scenario>_report_<current-datetime>.xml --html=report\html\<scenario>_report_<currebt-datetime>.html --self-contained-html
+pytest <scenario>_pytest.py --junitxml=report\xml\<scenario>_report_<current-datetime>.xml --html=report\html\<scenario>_report_<currebt-datetime>.html --self-contained-html --base-url=<user-provided-url>
 ```
 
 Replace <scenario> with the actual file name of the converted test. This helps users immediately verify the test and generate reports in both JUnit XML and HTML format.
