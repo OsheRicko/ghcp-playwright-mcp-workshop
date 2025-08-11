@@ -113,7 +113,7 @@ def test_example_domain(page: Page, browser_name: str, base_url: str):
 At the end of the conversion, always provide the user with a ready-to-run pytest command like the following:
 
 ```
-pytest <scenario>_pytest.py --junitxml=report\xml\<scenario>_report_<current-datetime>.xml --html=report\html\<scenario>_report_<currebt-datetime>.html --self-contained-html --base-url=<user-provided-url>
+pytest <scenario>_pytest.py --junitxml=report\xml\<scenario>_report_%date:~-4,4%%date:~-7,2%%date:~-10,2%_%time:~0,2%%time:~3,2%%time:~6,2%.xml --html=report\html\<scenario>_report_%date:~-4,4%%date:~-7,2%%date:~-10,2%_%time:~0,2%%time:~3,2%%time:~6,2%.html --self-contained-html --base-url=<user-provided-url>
 ```
 
 Replace <scenario> with the actual file name of the converted test. This helps users immediately verify the test and generate reports in both JUnit XML and HTML format.
