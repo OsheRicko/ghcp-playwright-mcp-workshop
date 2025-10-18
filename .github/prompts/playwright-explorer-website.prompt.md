@@ -1,7 +1,7 @@
 ---
 mode: agent
 description: '使用 Playwright MCP 進行網站探索'
-tools: ['search/codebase', 'edit/editFiles', 'fetch', 'problems', 'runCommands', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'edit', 'new', 'think', 'changes', 'testFailure', 'openSimpleBrowser', 'todos', 'playwright']
+tools: ['search/codebase', 'edit/editFiles', 'problems', 'runCommands', 'runTasks', 'search', 'search/searchResults', 'runCommands/terminalLastCommand', 'runCommands/terminalSelection', 'edit', 'new', 'changes', 'testFailure', 'openSimpleBrowser', 'todos', 'playwright']
 ---
 
 # 角色
@@ -22,19 +22,26 @@ tools: ['search/codebase', 'edit/editFiles', 'fetch', 'problems', 'runCommands',
 2. **探索流程**
     - 使用 Playwright MCP Server 啟動瀏覽器並導覽至提供的 URL
     - 識別並互動操作 3 至 5 個代表網站核心功能的主要特色或使用流程
-    - 對每個功能或流程，需記錄以下內容：
+    - 列出每個功能的詳細操作步驟與預期行為
+    - 務必參考 [Element Location Best Practices](docs/element-location-best-practices.md) 中的最佳實踐來定位與互動元素
+    - 針對每個功能進行操作，需記錄以下內容：
         - 使用者執行的操作步驟
         - 相關的 UI 元素及其定位方式（locator）
         - 預期結果或行為
-
+        - 操作成功畫面截圖保存置保存為 `功能名稱_時間戳.png`
+        - 若操作失敗，需記錄錯誤訊息並保存錯誤畫面截圖置保存為 `功能名稱_時間戳.png`
 3. **工作階段管理**
     - 完成探索後，需乾淨地關閉瀏覽器執行環境（browser context）
-
-4. 文件撰寫
-    - 將探索結果整理成 Markdown 格式，儲存為 `website-exploration-summary.md`
+4. **分析與總結**
+    - 分析每個功能的行為與結果
+    - 彙整探索過程中的操作過的步驟，觀察重點、使用者體驗及功能完整性
+5. **文件撰寫**
+    - 所有產出文件儲存至 `reports` 資料夾 
+    - 將探索結果整理成 Markdown 格式，以 [website-exploration-summary](../../docs/template-website-exploration-summary.md)為輸出格式，儲存為 `website-exploration-summary.md`
         - 內容應包含：
             - 所探索功能的高層概要
             - 執行的操作
+            - 截圖的連結
             - 主要觀察重點
     - 根據探索結果，為每個識別出的功能提出並產生測試案例
         - 將建議的測試案例以 Markdown 格式儲存為 `proposed-test-cases.md`
