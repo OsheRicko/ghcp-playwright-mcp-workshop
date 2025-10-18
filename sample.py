@@ -11,13 +11,20 @@ def run_test(playwright, browser_name):
         page.goto("https://example.com/")
         expect(page.get_by_role("heading", name="Example Domain")).to_be_visible()
         page.get_by_text("This domain is for use in").click()
-        page.get_by_role("link", name="More information...").click()
+        page.get_by_role("link", name="Learn more").click()
         expect(page).to_have_url(re.compile(r"https?://www\.iana\.org/help/example-domains"))
         # expect(page).to_have_url("https://www.iana.org/help/example-domains")
         page.wait_for_load_state("networkidle")
+        
+        # Take screenshot on success
+        screenshot_dir = os.path.join("report", "screenshot")
+        os.makedirs(screenshot_dir, exist_ok=True)
+        success_screenshot_path = os.path.join(screenshot_dir, f"success_{browser_name}.png")
+        page.screenshot(path=success_screenshot_path)
+        print(f"Success screenshot saved to {success_screenshot_path}")
     except Exception as e:
         # Ensure screenshot directory exists
-        screenshot_dir = os.path.join("report", "scrennshot")
+        screenshot_dir = os.path.join("report", "screenshot")
         os.makedirs(screenshot_dir, exist_ok=True)
         screenshot_path = os.path.join(screenshot_dir, f"error_{browser_name}.png")
         page.screenshot(path=screenshot_path)
@@ -29,16 +36,9 @@ def run_test(playwright, browser_name):
 
 with sync_playwright() as playwright:
     for browser_name in ["chromium", "firefox", "webkit"]:
+    # browser_name = "msedge"
         try:
             print(f"Running test in {browser_name}...")
             run_test(playwright, browser_name)
         except Exception as e:
             print(f"Test failed in {browser_name}: {e}")
-
-# with sync_playwright() as playwright:
-#     try:
-#         print("Running test in Microsoft Edge...")
-#         run_test(playwright, "msedge")
-#         print("Test completed successfully.")
-#     except Exception as e:
-#         print(f"Test failed: {e}")
