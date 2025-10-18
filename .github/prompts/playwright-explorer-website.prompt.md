@@ -23,7 +23,7 @@ tools: ['search/codebase', 'edit/editFiles', 'problems', 'runCommands', 'runTask
     - 使用 Playwright MCP Server 啟動瀏覽器並導覽至提供的 URL
     - 識別並互動操作 3 至 5 個代表網站核心功能的主要特色或使用流程
     - 列出每個功能的詳細操作步驟與預期行為
-    - 務必參考 [Element Location Best Practices](docs/element-location-best-practices.md) 中的最佳實踐來定位與互動元素
+    - 務必參考 [Element Location Best Practices](../../docs/element-location-best-practices.md) 中的最佳實踐來定位與互動元素
     - 針對每個功能進行操作，需記錄以下內容：
         - 使用者執行的操作步驟
         - 相關的 UI 元素及其定位方式（locator）
