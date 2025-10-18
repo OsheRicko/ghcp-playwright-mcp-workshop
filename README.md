@@ -1,62 +1,58 @@
-# Playwright Workshop
+# Playwright MCP with GitHub Copilot Workshop
 
-一個全面的 Playwright Python 測試框架，用於網頁自動化和端到端測試
+## 🧑‍💻 Playwright MCP 操作步驟練習
 
-## 📁 專案結構
+以下為練習 Playwright MCP 操作的標準步驟，請依序完成：
+> 📢 **注意**：為確保產生結果符合 lab 環境，建議使用指示中建議的模型進行操作
 
-```
-playwright-workshop/
-├── .github/
-│   ├── instructions/
-│   │   └── playwright-python.instructions.md
-│   ├── prompts/
-│   │   ├── pytest-playwright.prompt.md
-│   │   ├── playwright-generate-test.prompt.md
-│   │   └── playwright-explorer-website.prompt.md
-│   └── chatmodes/
-│       └── playwright-expert.chatmode.md
-├── .vscode/
-│   └── mcp.json
-├── report/                         # 測試報告和截圖
-│   ├── screenshot/
-│   ├── xml/
-│   └── html/
-├── sample.py                       # 基本 Playwright 範例
-├── sample_pytest.py               # Pytest-Playwright 範例
-├── requirements.txt               # Python 相依性套件
-├── pytest.ini                    # Pytest 設定檔
-├── .gitignore
-└── README.md
-```
+### Lab 1 : 環境準備及測試
+#### 環境準備
 
-## 🚀 開始使用
-
-### 前置需求
-
-- Python 3.8+
-- pip
-
-### 安裝
-
-1. 安裝相關套件：
-    ```bash
-    pip install -r requirements.txt
+1. **開啟 Codespace**
+2. **建立 python 虛擬環境**
     ```
-
-2. 安裝 playwright 瀏覽器執行檔：
-    ```bash
-    playwright install
-    playwright install-deps
+    python -m venv venv
+    source venv/bin/activate
     ```
-
-### 執行測試
-
-1. 執行基本測試：
-    ```bash
+2. **安裝相依套件**
+   ```bash
+   pip install -r requirements.txt
+   playwright install
+   playwright install-deps
+   ```
+#### 測試 playwright 腳本執行
+1. **執行測試檔案**
+   ```bash
     python sample.py
-    ```
+   ```
+2. **執行測試並產生報告**
+   ```bash
+   pytest tests/test_sample.py --junitxml=reports/xml/sample_report.xml --html=reports/html/report_sample.html --self-contained-html
+   ```
+### Lab 2 : 使用 Playwright MCP 進行測試
+1. **啟動 Playwright MCP**: 瀏覽至 `.github/mcp.json`，找到 `playwright` 並點選 start
+2. **透過 GitHub Copilot Chat 進行測試**
+    - 開啟 GitHub Copilot Chat 視窗，選擇 Agent 模式，模型使用 `claude sonnet 4`
+    - 輸入指令
+        ```
+        /playwright-explorer-website 瀏覽至 https://www.asus.com/tw/displays-desktops/gaming-tower-pcs/all-series/ 進行以下測試驗證
+         1. 確認產品比較功能：查詢 60,000 以上的產品，進行產品比較並顯示比較結果
+         2. 確認產品比較上線功能：當操作產品比較超過 4 個以上則無法增加
+        ```
 
-2. 執行 pytest 測試檔案：
-    ```bash
-    pytest sample_pytest.py --junitxml=report/xml/sample_report.xml --html=report/html/report_sample.html --self-contained-html
-    ```
+### Lab 3 : 進行探索測試並產生測試案例
+1. **透過 GitHub Copilot Chat 進行測試**
+    - 開啟 GitHub Copilot Chat 視窗，選擇 Agent 模式，模型使用 `claude sonnet 4` 
+    - 輸入指令
+      ```
+      Follow instructions in playwright-explorer-website.prompt.md.
+      將購物車的功能整理成測試案例文件
+      ```
+### Lab 4 : 產生測試腳本
+1. **反白選取 1-2 個 Lab 3 產生的測試文件中的測試案例** (為避免執行過久，建議選取少量測試案例)
+2. **透過 GitHub Copilot Chat 進行測試**
+    - 開啟 GitHub Copilot Chat 視窗，選擇 Agent 模式，模型使用 `claude sonnet 4` 
+    - 輸入指令
+      ```
+      /playwright-generate-test 參考 #selection 產生測試腳本
+      ```
