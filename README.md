@@ -29,6 +29,9 @@
    ```bash
    pytest tests/test_sample.py --junitxml=reports/xml/sample_report.xml --html=reports/html/report_sample.html --self-contained-html
    ```
+
+---
+
 ### Lab 2 : 使用 Playwright MCP 進行測試
 1. **啟動 Playwright MCP**: 瀏覽至 `.github/mcp.json`，找到 `playwright` 並點選 start
 2. **透過 GitHub Copilot Chat 進行測試**
@@ -40,6 +43,8 @@
          2. 確認產品比較上線功能：當操作產品比較超過 4 個以上則無法增加
         ```
 
+---
+
 ### Lab 3 : 進行探索測試並產生測試案例
 1. **透過 GitHub Copilot Chat 進行測試**
     - 開啟 GitHub Copilot Chat 視窗，選擇 Agent 模式，模型使用 `claude sonnet 4` 
@@ -48,6 +53,9 @@
       Follow instructions in playwright-explorer-website.prompt.md.
       將購物車的功能整理成測試案例文件
       ```
+
+---
+
 ### Lab 4 : 產生測試腳本
 1. **反白選取 1-2 個 Lab 3 產生的測試文件中的測試案例** (為避免執行過久，建議選取少量測試案例)
 2. **透過 GitHub Copilot Chat 進行測試**

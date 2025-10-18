@@ -11,8 +11,8 @@ tools: ['search/codebase', 'edit/editFiles', 'problems', 'runCommands', 'runTask
 
 # Playwright MCP：引導式測試產生流程
 
-你的任務是根據使用者提供的情境，使用 `@playwright/test` 生成一個 **Playwright Python 測試** 
-請嚴格遵守並依序執行以下工作流程
+- 你的任務是根據使用者提供的情境，使用 `@playwright/test` 生成一個 **Playwright Python 測試** 
+- 請嚴格遵守並依序執行以下工作流程
 
 ## 工作流程規則
 
@@ -27,8 +27,8 @@ tools: ['search/codebase', 'edit/editFiles', 'problems', 'runCommands', 'runTask
 
 ### 3. 測試生成
 - 當所有步驟完成後，建立 `tests` 資料夾，將下一步生成的測試檔案儲存於 `tests` 目錄中
-- 使用 `@playwright/test` 生成 **Playwright Python Test**
-- 將生成的測試修改成符合以下 logging 與錯誤處理規範：
+- 使用 `@playwright/test` 生成 **Playwright Python Test**，需考量使用者停留及頁面顯示時間
+- 將生成的測試 **務必遵循 [playwright Best Practices](../../docs/playwright-best-practices.md)規則，並且符合以下 logging 規範**
     ```python
         import re
         import pytest
@@ -39,40 +39,37 @@ tools: ['search/codebase', 'edit/editFiles', 'problems', 'runCommands', 'runTask
         def test_example_domain(page: Page, browser_name: str, base_url: str):
             logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
             logger = logging.getLogger("example_pytest")
-            try:
-                logger.info(f"Navigating to example.com on browser: {browser_name} with base URL: {base_url}")
-                page.goto(f"{base_url}/")
-                logger.info("Checking visibility of 'Example Domain' heading")
-                expect(page.get_by_role("heading", name="Example Domain")).to_be_visible()
-                logger.info("Clicking on text 'This domain is for use in'")
-                page.get_by_text("This domain is for use in").click()
-                logger.info("Clicking on 'More information...' link")
-                page.get_by_role("link", name="More information...").click()
-                logger.info("Verifying redirection to IANA website")
-                expect(page).to_have_url("https://www.iana.org/help/example-domains")
-                logger.info("Waiting for network to be idle")
-                page.wait_for_load_state("networkidle")
-            except Exception as e:
-                logger.error(f"Test failed on browser {browser_name}: {e}")
-                screenshot_dir = os.path.join("report", "screenshot")
-                os.makedirs(screenshot_dir, exist_ok=True)
-                screenshot_path = os.path.join(screenshot_dir, f"error_pytest_{browser_name}.png")
-                page.screenshot(path=screenshot_path)
-                logger.error(f"Screenshot saved to {screenshot_path}")
-                raise
+            logger.info(f"Navigating to example.com on browser: {browser_name} with base URL: {base_url}")
+            page.goto(f"{base_url}/")
+            logger.info("Checking visibility of 'Example Domain' heading")
+            expect(page.get_by_role("heading", name="Example Domain")).to_be_visible()
+            logger.info("Clicking on text 'This domain is for use in'")
+            page.get_by_text("This domain is for use in").click()
+            logger.info("Clicking on 'More information...' link")
+            page.get_by_role("link", name="More information...").click()
+            logger.info("Verifying redirection to IANA website")
+            expect(page).to_have_url("https://www.iana.org/help/example-domains")
+            logger.info("Waiting for network to be idle")
+            page.wait_for_load_state("networkidle")
+
     ```
-- 測試必須反映情境細節，並遵循 [Element Location BestPractices](../../docs/element-location-best-practices.md)
+
 
 ### 4. 執行與迭代
-- 執行生成的測試檔案
-    1. 先啟動 python venv 環境，執行 `source venv/bin/activate`
-    2. 使用 pytest 執行測試
-    3. 分析測試結果，並重構或修正測試程式碼直到測試成功通過
-    4. 務必確保所有測試案例皆通過
-    4. 當所有測試成功通過後，執行以下指令已產生測試報告
-        ```bash
-        pytest <generated_test_file> --junitxml=reports/xml/<generated_test_report>.xml --html=reports/html/<generated_test_report>.html --self-contained-html
-        ```
+執行生成的測試檔案
+1. 執行 `source venv/bin/activate` 啟動 python venv 環境
+2. 修改 [pytest.ini](../../pytest.ini) 檔案為以下，僅測試 chromium 瀏覽器
+    ```ini
+    [pytest]
+    addopts = --log-cli-level=INFO --browser=chromium
+    ```
+3. 使用 pytest 執行測試
+4. 分析測試結果，並重構或修正測試程式碼直到測試成功通過
+5. 務必確保所有測試案例皆通過
+6. 當所有測試成功通過後，再執行以下指令已產生測試報告
+    ```bash
+    pytest <generated_test_file> --junitxml=reports/xml/<generated_test_report>.xml --html=reports/html/<generated_test_report>.html --self-contained-html
+    ```
 
 ## 輸出規則
 - 僅在所有步驟與迭代完成後輸出最終的 **Playwright Python Test** 
