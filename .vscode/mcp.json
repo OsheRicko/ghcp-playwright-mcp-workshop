@@ -1,0 +1,19 @@
+{
+    "inputs": [
+		{
+		"id": "ado_org",
+		"type": "promptString",
+		"description": "Azure DevOps organization name  (e.g. 'contoso')"
+		}
+    ],
+    "servers": {
+        "playwright": {
+            "command": "npx",
+            "args": [
+                "@playwright/mcp@latest",
+                "--browser=msedge"
+            ]
+        },
+
+    }
+}

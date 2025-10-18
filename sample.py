@@ -3,7 +3,8 @@ from playwright.sync_api import sync_playwright, expect
 import os
 
 def run_test(playwright, browser_name):
-    browser = getattr(playwright, browser_name).launch(headless=False)
+    browser = getattr(playwright, browser_name).launch(headless=True)
+    # browser = playwright.chromium.launch(channel=browser_name, headless=True)
     context = browser.new_context()
     page = context.new_page()
     try:
@@ -33,3 +34,11 @@ with sync_playwright() as playwright:
             run_test(playwright, browser_name)
         except Exception as e:
             print(f"Test failed in {browser_name}: {e}")
+
+# with sync_playwright() as playwright:
+#     try:
+#         print("Running test in Microsoft Edge...")
+#         run_test(playwright, "msedge")
+#         print("Test completed successfully.")
+#     except Exception as e:
+#         print(f"Test failed: {e}")
