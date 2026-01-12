@@ -1,8 +1,8 @@
 # Playwright Workshop
 
-一個全面的 Playwright Python 測試框架，用於網頁自動化和端到端測試
+A comprehensive Playwright Python testing framework for web automation and end-to-end testing.
 
-## 📁 專案結構
+## 📁 Project Structure
 
 ```
 playwright-workshop/
@@ -17,46 +17,46 @@ playwright-workshop/
 │       └── playwright-expert.chatmode.md
 ├── .vscode/
 │   └── mcp.json
-├── report/                         # 測試報告和截圖
+├── report/                         # Test reports and screenshots
 │   ├── screenshot/
 │   ├── xml/
 │   └── html/
-├── sample.py                       # 基本 Playwright 範例
-├── sample_pytest.py               # Pytest-Playwright 範例
-├── requirements.txt               # Python 相依性套件
-├── pytest.ini                    # Pytest 設定檔
+├── sample.py                       # Basic Playwright example
+├── sample_pytest.py               # Pytest-Playwright example
+├── requirements.txt               # Python dependencies
+├── pytest.ini                    # Pytest configuration
 ├── .gitignore
 └── README.md
 ```
 
-## 🚀 開始使用
+## 🚀 Getting Started
 
-### 前置需求
+### Prerequisites
 
 - Python 3.8+
 - pip
 
-### 安裝
+### Installation
 
-1. 安裝相關套件：
+1. Install dependencies:
     ```bash
     pip install -r requirements.txt
     ```
 
-2. 安裝 playwright 瀏覽器執行檔：
+2. Install Playwright browsers:
     ```bash
     playwright install
     playwright install-deps
     ```
 
-### 執行測試
+### Running Tests
 
-1. 執行基本測試：
+1. Run the basic script:
     ```bash
     python sample.py
     ```
 
-2. 執行 pytest 測試檔案：
+2. Run the pytest test file:
     ```bash
     pytest sample_pytest.py --junitxml=report/xml/sample_report.xml --html=report/html/report_sample.html --self-contained-html
     ```

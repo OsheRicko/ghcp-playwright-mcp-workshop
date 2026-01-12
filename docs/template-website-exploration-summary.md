@@ -1,24 +1,24 @@
-# [探索網站/功能]探索報告
+# [Website/Feature] Exploration Report
 
-## 測試日期
-[執行日期，以 YYYY年MM月DD日 格式表示]
+## Test Date
+[Execution date, in the format YYYY-MM-DD]
 
-## 探索目標
-[包含受測目標網站/功能的簡要描述]
+## Exploration Goals
+[A brief description of the target website/feature under test]
 
-## 探索過程記錄
-[包含測試過程中所執行的主要步驟和操作及各步驟的結果摘要及截圖]
+## Exploration Process Log
+[Main steps and actions performed during testing, with result summaries and screenshots]
 
-## 技術實現細節
+## Technical Details
 
-### 遇到的挑戰
-[測試過程中遇到的主要技術挑戰或問題]
+### Challenges Encountered
+[Major technical challenges or issues encountered during testing]
 
-### 解決方案
-[]針對上述挑戰所採取的解決方案或方法]
+### Solutions
+[Solutions or approaches used to resolve the above challenges]
 
-## 關鍵發現
-[測試過程中發現的主要問題、優點或改進建議]
+## Key Findings
+[Main issues found, strengths, and improvement suggestions]
 
-## 結論
-[彙整測試結果，並對目標網站/功能的整體表現進行評估]
+## Conclusion
+[Overall evaluation of the target website/feature based on the testing results]

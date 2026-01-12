@@ -1,17 +1,17 @@
 # Playwright Workshop
 
-## 回覆說明
-- 必須以繁體中文回覆
+## Response Guidelines
+- Replies should be provided in English for this lab context.
 
-## 架構
+## Structure
 
-完整的資料夾結構請參考 [document.md](../docs/document.md)
+For the full folder structure, see [document.md](../docs/document.md).
 
-# Playwright 範例專案說明
+# Playwright Sample Project Description
 
-- `sample.py`：基本的 Playwright Python 腳本，展示瀏覽器自動化操作
-- `sample_pytest.py`：Pytest-Playwright 測試檔案，展示端對端測試及報告功能
+- `sample.py`: Basic Playwright Python script demonstrating browser automation.
+- `sample_pytest.py`: Pytest-Playwright test file demonstrating end-to-end testing and reporting.
 
-# Playwright 環境設定
-- 詳細的安裝與使用說明請參考 [document.md](../docs/document.md)
-- 所需的所有依賴套件都列在 `requirements.txt`。
+# Playwright Environment Setup
+- For detailed installation and usage instructions, see [document.md](../docs/document.md).
+- All required dependencies are listed in `requirements.txt`.

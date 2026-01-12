@@ -1,37 +1,37 @@
 ---
-description: '根據官方文件的 Playwright Python AI 測試生成指引'
+description: 'Playwright Python AI test generation guidelines based on official documentation'
 applyTo: '**'
 ---
 
-# Playwright Python 測試生成指引
+# Playwright Python Test Generation Guidelines
 
-## 測試撰寫準則
+## Test Authoring Principles
 
-### 程式碼品質標準
-- **定位器（Locators）**：優先使用以使用者為中心的角色型定位器（如 `get_by_role`、`get_by_label`、`get_by_text`），以提升穩定性與可存取性  
-- **斷言（Assertions）**：使用自動重試、以網頁為中心的斷言 API，例如 `expect(page).to_have_title(...)`除非特別要測試元素可見性變化，否則避免使用 `expect(locator).to_be_visible()`，因為更具體的斷言通常更可靠  
-- **逾時設定（Timeouts）**：依賴 Playwright 內建的自動等待機制，避免使用硬編碼等待或任意增加預設逾時時間  
-- **可讀性（Clarity）**：使用具描述性的測試名稱（例如 `def test_navigation_link_works():`）以清楚表達意圖僅在邏輯複雜時撰寫註解，不要為簡單動作（如「點擊按鈕」）加註說明
+### Code Quality Standards
+- **Locators**: Prefer user-centric, role-based locators such as `get_by_role`, `get_by_label`, and `get_by_text` to improve stability and accessibility.  
+- **Assertions**: Use auto-retrying, web-first assertion APIs such as `expect(page).to_have_title(...)`. Unless you specifically need to test visibility changes, avoid `expect(locator).to_be_visible()`; more specific assertions are usually more reliable.  
+- **Timeouts**: Rely on Playwright's built-in auto-waiting. Avoid hard-coded sleeps or arbitrarily increasing default timeouts.  
+- **Clarity**: Use descriptive test names (for example, `def test_navigation_link_works():`) to clearly express intent. Only add comments when the logic is complex; do not comment on trivial actions like clicking a button.
 
-### 測試結構
-- **匯入（Imports）**：每個測試檔案都應以 `from playwright.sync_api import Page, expect` 開頭  
-- **測試治具（Fixtures）**：使用 `page: Page` 作為測試函式參數，以便操作瀏覽器頁面  
-- **設定步驟（Setup）**：在每個測試函式開頭放置導覽步驟，例如 `page.goto()`若多個測試共用相同設定動作，請使用標準 Pytest fixtures 管理
+### Test Structure
+- **Imports**: Every test file should start with `from playwright.sync_api import Page, expect`.  
+- **Fixtures**: Use `page: Page` as a test function parameter to interact with the browser page.  
+- **Setup Steps**: Put navigation steps such as `page.goto()` at the start of each test. If multiple tests share the same setup, use standard Pytest fixtures.
 
-### 檔案組織
-- **位置（Location）**：將測試檔案存放於專用的 `tests/` 目錄，或依專案現有結構存放  
-- **命名（Naming）**：測試檔案必須遵循 `test_<功能或頁面>.py` 命名慣例，以便 Pytest 自動發現  
-- **範圍（Scope）**：建議每個主要應用功能或頁面使用一個測試檔案
+### File Organization
+- **Location**: Store test files in a dedicated `tests/` directory or follow the existing project structure.  
+- **Naming**: Test files should follow the `test_<feature_or_page>.py` naming convention so that Pytest can discover them automatically.  
+- **Scope**: Prefer one test file per major application feature or page.
 
 ---
 
-## 斷言最佳實踐
-- **元素數量**：使用 `expect(locator).to_have_count()` 驗證定位器所找到的元素數量  
-- **文字內容**：使用 `expect(locator).to_have_text()` 進行精確比對，或 `expect(locator).to_contain_text()` 進行部分比對  
-- **導覽驗證**：使用 `expect(page).to_have_url()` 驗證頁面 URL  
-- **斷言風格**：優先使用 `expect` 而非傳統 `assert`，以獲得更穩定的 UI 測試行為
+## Assertion Best Practices
+- **Element Count**: Use `expect(locator).to_have_count()` to validate the number of matched elements.  
+- **Text Content**: Use `expect(locator).to_have_text()` for exact matches, or `expect(locator).to_contain_text()` for partial matches.  
+- **Navigation Verification**: Use `expect(page).to_have_url()` to validate the page URL.  
+- **Assertion Style**: Prefer `expect` over traditional `assert` for more stable UI tests.
 
-## 範例
+## Examples
 
 ```python
 import re
@@ -57,7 +57,7 @@ def test_get_started_link(page: Page):
     expect(page.get_by_role("heading", name="Installation")).to_be_visible()
 ```
 
-## 測試執行策略
+## Test Execution Strategy
 
-1. **執行**: 使用終端機命令 pytest 來執行測試
-2. **除錯失敗**: 分析測試失敗的原因，並針對根本問題進行修正
+1. **Run tests**: Use the `pytest` command in the terminal to execute tests.
+2. **Debug failures**: Analyze the root cause of any failed tests and fix the underlying issues.

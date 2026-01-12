@@ -1,20 +1,20 @@
 # Playwright MCP with GitHub Copilot Workshop
 
-## 🧑‍💻 Playwright MCP 操作步驟練習
+## 🧑‍💻 Playwright MCP Practice Steps
 
-以下為練習 Playwright MCP 操作的標準步驟，請依序完成：
-> 📢 **注意**：為確保產生結果符合 lab 環境，建議使用指示中建議的模型進行操作
+Below are the standard steps to practice Playwright MCP operations. Please complete them in order:
+> 📢 **Note**: To ensure results match the lab environment, it is recommended to use the model suggested in the lab instructions.
 
-### Lab 1 : 環境準備及測試
-#### 環境準備
+### Lab 1: Environment Setup and Smoke Test
+#### Environment Setup
 
-1. **開啟 Codespace**
-2. **建立 python 虛擬環境**
+1. **Open Codespace**
+2. **Create a Python virtual environment**
     ```
     python -m venv venv
     source venv/bin/activate
     ```
-2. **安裝相依套件**
+3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    playwright install
@@ -22,61 +22,61 @@
    ```
 
 
-#### 測試 playwright 腳本執行
+#### Run Playwright Script
 
-1. **執行測試檔案**
+1. **Run the sample script**
    ```bash
     python sample.py
    ```
-   - **預期**：於 `report/screenshot/` 中顯示成功截圖
+   - **Expected**: a success screenshot is generated under `report/screenshot/`.
 
-2. **執行測試並產生報告**
+2. **Run tests and generate reports**
    ```bash
    pytest sample_pytest.py /
        --junitxml=report/xml/sample_report.xml /
        --html=report/html/report_sample.html /
        --self-contained-html
    ```
-   - **預期**: 於 `report/screenshot/` 中顯示成功截圖及 html 和 xml 報告
-   - 💡 **Tips**: 於 extension 中安裝 **Live Preview (Microsoft)** 可於 Codespace 中瀏覽 html 頁面
+   - **Expected**: success screenshots plus HTML and XML reports are generated under `report/`.
+   - 💡 **Tips**: Install the **Live Preview (Microsoft)** extension to view HTML reports directly inside Codespaces.
 
 ---
 
-### Lab 2 : 使用 Playwright MCP 進行測試
+### Lab 2: Use Playwright MCP for Testing
 
-1. **啟動 Playwright MCP**: 瀏覽至 `.github/mcp.json`，找到 `playwright` 並點選 start
-2. **透過 GitHub Copilot Chat 進行測試**
-    - 開啟 GitHub Copilot Chat 視窗，選擇 Agent 模式，模型使用 `claude sonnet 4`
-    - 輸入指令
+1. **Start Playwright MCP**: Open `.github/mcp.json`, find the `playwright` entry, and click **start**.
+2. **Run tests via GitHub Copilot Chat**
+    - Open GitHub Copilot Chat, switch to Agent mode, and use the `claude sonnet 4` model.
+    - Enter the command:
         ```
-        /playwright-explorer-website 瀏覽至 https://www.asus.com/tw/displays-desktops/gaming-tower-pcs/all-series/ 進行以下測試驗證
-         1. 確認產品比較功能：查詢 60,000 以上的產品，進行產品比較並顯示比較結果
-         2. 確認產品比較上線功能：當操作產品比較超過 4 個以上則無法增加
+        /playwright-explorer-website Browse to https://www.asus.com/tw/displays-desktops/gaming-tower-pcs/all-series/ and perform the following checks:
+         1. Verify product comparison: search for products above 60,000, compare products, and show comparison results.
+         2. Verify comparison limit: when more than 4 products are added to comparison, ensure no more items can be added.
         ```
-   - **預期**:  於 `report/screenshot/` 中顯示截圖，產生總結報告 `website-exploration-summary.md` 及建議的測試案例 `proposed-test-cases.md` 檔案
+   - **Expected**: screenshots under `report/screenshot/`, plus a summary report `website-exploration-summary.md` and suggested test cases file `proposed-test-cases.md`.
 
 ---
 
-### Lab 3 : 進行探索測試並產生測試案例
+### Lab 3: Exploratory Testing and Test Case Generation
 
-1. **使用 `/clear` 開啟新的對話**
-2. **透過 GitHub Copilot Chat 進行測試**
-    - 開啟 GitHub Copilot Chat 視窗，選擇 Agent 模式，模型使用 `claude sonnet 4` 
-    - 輸入指令
+1. **Use `/clear` to start a new conversation**
+2. **Run exploratory testing via GitHub Copilot Chat**
+    - Open GitHub Copilot Chat, switch to Agent mode, and use the `claude sonnet 4` model.
+    - Enter the command:
       ```
-      /playwright-explorer-website.prompt.md 瀏覽 https://www.asus.com/tw/store/ 並將購物車的功能整理成測試案例文件
+      /playwright-explorer-website.prompt.md Browse https://www.asus.com/tw/store/ and summarize the shopping cart functionality into a test case document.
       ```
-    - **預期**: 於 `report/` 產生購物車功能相關的測試案例
+    - **Expected**: shopping cart–related test cases are generated under `report/`.
 ---
 
-### Lab 4 : 產生測試腳本
+### Lab 4: Generate Test Scripts
 
-1. **使用 `/clear` 開啟新的對話**
-2. **反白選取 1-2 個 Lab 3 產生的測試文件中的測試案例** (為避免執行過久，建議選取少量測試案例)
-3. **透過 GitHub Copilot Chat 進行測試**
-    - 開啟 GitHub Copilot Chat 視窗，選擇 Agent 模式，模型使用 `claude sonnet 4` 
-    - 輸入指令
+1. **Use `/clear` to start a new conversation**
+2. **Select 1–2 test cases from the Lab 3 output** (to avoid long runs, select only a few cases).
+3. **Generate tests via GitHub Copilot Chat**
+    - Open GitHub Copilot Chat, switch to Agent mode, and use the `claude sonnet 4` model.
+    - Enter the command:
       ```
-      /playwright-generate-test 參考 #selection 產生測試腳本
+      /playwright-generate-test Based on #selection, generate Playwright Python test scripts.
       ```
-   - **預期**: 於 `tests/` 生成 python 測試腳本並透過執行 pytest 指令產生 html 及 xml 測試報告
+   - **Expected**: Python test scripts are generated under `tests/`, and running `pytest` produces HTML and XML test reports.
