@@ -49,7 +49,7 @@ Below are the standard steps to practice Playwright MCP operations. Please compl
     - Open GitHub Copilot Chat, switch to Agent mode, and use the `claude sonnet 4` model.
     - Enter the command:
         ```
-        /playwright-explorer-website Browse to https://www.asus.com/tw/displays-desktops/gaming-tower-pcs/all-series/ and perform the following checks:
+        /playwright-explorer-website Browse to https://www.asus.com/displays-desktops/gaming-tower-pcs/all-series/ and perform the following checks:
          1. Verify product comparison: search for products above 60,000, compare products, and show comparison results.
          2. Verify comparison limit: when more than 4 products are added to comparison, ensure no more items can be added.
         ```
@@ -64,7 +64,7 @@ Below are the standard steps to practice Playwright MCP operations. Please compl
     - Open GitHub Copilot Chat, switch to Agent mode, and use the `claude sonnet 4` model.
     - Enter the command:
       ```
-      /playwright-explorer-website.prompt.md Browse https://www.asus.com/tw/store/ and summarize the shopping cart functionality into a test case document.
+    /playwright-explorer-website.prompt.md Browse https://www.asus.com/store/ and summarize the shopping cart functionality into a test case document.
       ```
     - **Expected**: shopping cart–related test cases are generated under `report/`.
 ---

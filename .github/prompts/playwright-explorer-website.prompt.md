@@ -22,7 +22,7 @@ Your task is to explore a website, analyze its core functionality, and derive po
     - Use the Playwright MCP Server to start a browser and navigate to the provided URL.
     - Identify and interact with 3–5 key features or user flows that represent the core functionality of the site.
     - For each feature, list detailed interaction steps and expected behavior.
-    - Follow the best practices in [Element Location Best Practices](../../docs/element-location-best-practices.md) when locating and interacting with elements.
+    - Follow the best practices in [Playwright Best Practices](../../docs/playwright-best-practices.md) when locating and interacting with elements.
     - For each feature you explore, record:
         - The user actions/steps performed
         - Relevant UI elements and their locators
