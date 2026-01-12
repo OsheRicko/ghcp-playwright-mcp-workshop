@@ -36,6 +36,11 @@ Below are the standard steps to practice Playwright MCP operations. Please compl
    ```
    - **Expected**: success screenshots plus HTML and XML reports are generated under `report/`.
    - 💡 **Tips**: Install the **Live Preview (Microsoft)** extension to view HTML reports directly inside Codespaces.
+   - **If preview isn't working**: try:
+   ```bash 
+    cd /workspaces/ghcp-playwright-mcp-workshop/report/html && python3 -m http.server 8080
+   ```
+   **Click On**: http://0.0.0.0:8080/ --> The codespace will do a port forward to serve this html
 
 ---
 
@@ -61,7 +66,7 @@ Below are the standard steps to practice Playwright MCP operations. Please compl
     - Open GitHub Copilot Chat, switch to Agent mode, and use the `claude sonnet 4` model.
     - Enter the command:
       ```
-    /playwright-explorer-website.prompt.md Browse https://www.asus.com/store/ and summarize the shopping cart functionality into a test case document.
+      /playwright-explorer-website.prompt.md Browse https://www.asus.com/store/ and summarize the shopping cart functionality into a test case document.
       ```
     - **Expected**: shopping cart–related test cases are generated under `report/`.
 ---
