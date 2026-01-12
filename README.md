@@ -32,10 +32,7 @@ Below are the standard steps to practice Playwright MCP operations. Please compl
 
 2. **Run tests and generate reports**
    ```bash
-   pytest sample_pytest.py /
-       --junitxml=report/xml/sample_report.xml /
-       --html=report/html/report_sample.html /
-       --self-contained-html
+    pytest sample_pytest.py --junitxml=report/xml/sample_report.xml --html=report/html/report_sample.html --self-contained-html
    ```
    - **Expected**: success screenshots plus HTML and XML reports are generated under `report/`.
    - 💡 **Tips**: Install the **Live Preview (Microsoft)** extension to view HTML reports directly inside Codespaces.
