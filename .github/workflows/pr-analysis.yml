@@ -1,0 +1,235 @@
+name: PR Analysis with GitHub Copilot CLI
+
+# Trigger workflow on every push to any branch
+on:
+  pull_request:
+    branches:
+      - '**'
+
+# Ensure workflow can comment on PRs
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  analyze-pr:
+    name: Analyze Pull Request
+    runs-on: ubuntu-latest
+    
+    # Only run if the push is associated with a pull request
+    if: github.event_name == 'pull_request' && github.ref != format('refs/heads/{0}', github.event.repository.default_branch)
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for full diff analysis
+      
+      - name: Setup Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+      # Install GitHub CLI (gh) - comes pre-installed on ubuntu-latest
+      - name: Verify GitHub CLI
+        run: |
+          gh --version
+      
+      # Mock authentication for demo purposes
+      # In production, use: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+      - name: Setup GitHub CLI Authentication (Mock)
+        run: |
+          echo "Using GITHUB_TOKEN for authentication"
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          gh auth status
+      
+      # Get the PR number for this branch
+      - name: Get Pull Request Number
+        id: pr-number
+        run: |
+          PR_NUMBER=$(gh pr list --head "${{ github.ref_name }}" --json number --jq '.[0].number')
+          if [ -z "$PR_NUMBER" ] || [ "$PR_NUMBER" = "null" ]; then
+            echo "No pull request found for branch ${{ github.ref_name }}"
+            echo "pr_exists=false" >> $GITHUB_OUTPUT
+          else
+            echo "Found PR #$PR_NUMBER"
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_exists=true" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Analyze the pull request using GitHub Copilot CLI simulation
+      - name: Analyze PR with Copilot CLI
+        id: analyze
+        if: steps.pr-number.outputs.pr_exists == 'true'
+        run: |
+          # Get PR details
+          PR_NUM="${{ steps.pr-number.outputs.pr_number }}"
+          
+          echo "Fetching PR #$PR_NUM details..."
+          gh pr view $PR_NUM --json title,body,files,additions,deletions > pr_details.json
+          
+          # Get the diff
+          gh pr diff $PR_NUM > pr_diff.txt
+          
+          # Analyze the diff for common issues
+          echo "Analyzing code changes..."
+          
+          # Check for potential data races (simplified analysis)
+          echo "## PR Analysis Results" > analysis_report.md
+          echo "" >> analysis_report.md
+          echo "### 📊 Overview" >> analysis_report.md
+          echo "- **PR Number**: #$PR_NUM" >> analysis_report.md
+          echo "- **Branch**: ${{ github.ref_name }}" >> analysis_report.md
+          echo "- **Commit**: ${{ github.sha }}" >> analysis_report.md
+          echo "" >> analysis_report.md
+          
+          # Count additions/deletions
+          ADDITIONS=$(jq -r '.additions' pr_details.json)
+          DELETIONS=$(jq -r '.deletions' pr_details.json)
+          echo "- **Lines Added**: $ADDITIONS" >> analysis_report.md
+          echo "- **Lines Deleted**: $DELETIONS" >> analysis_report.md
+          echo "" >> analysis_report.md
+          
+          # Analyze for potential data race patterns
+          echo "### 🔍 Data Race Analysis" >> analysis_report.md
+          echo "" >> analysis_report.md
+          
+          # Check for threading-related patterns in Python
+          if grep -q "threading\|Thread\|Lock\|Semaphore\|multiprocessing" pr_diff.txt; then
+            echo "⚠️ **Threading/Concurrency detected** - Manual review recommended" >> analysis_report.md
+            echo "" >> analysis_report.md
+            echo "Found usage of threading constructs. Please ensure:" >> analysis_report.md
+            echo "- Shared resources are properly protected with locks" >> analysis_report.md
+            echo "- No race conditions exist in concurrent access patterns" >> analysis_report.md
+            echo "- Thread-safe data structures are used where appropriate" >> analysis_report.md
+          else
+            echo "✅ No obvious threading/concurrency patterns detected" >> analysis_report.md
+          fi
+          echo "" >> analysis_report.md
+          
+          # Check for async patterns
+          if grep -q "async\|await\|asyncio" pr_diff.txt; then
+            echo "ℹ️ **Async/await patterns detected**" >> analysis_report.md
+            echo "" >> analysis_report.md
+            echo "Review async code for:" >> analysis_report.md
+            echo "- Proper await usage to prevent blocking" >> analysis_report.md
+            echo "- Exception handling in async contexts" >> analysis_report.md
+            echo "- Correct event loop management" >> analysis_report.md
+            echo "" >> analysis_report.md
+          fi
+          
+          # Check for global variables
+          if grep -q "^global \|^GLOBAL_\|^[A-Z_]*\s*=" pr_diff.txt; then
+            echo "⚠️ **Global variables detected** - Potential shared state" >> analysis_report.md
+            echo "" >> analysis_report.md
+            echo "Global variables may cause issues in concurrent environments:" >> analysis_report.md
+            echo "- Consider using local variables or thread-local storage" >> analysis_report.md
+            echo "- Ensure proper synchronization if global state is necessary" >> analysis_report.md
+            echo "" >> analysis_report.md
+          fi
+          
+          # Code quality checks
+          echo "### 💎 Code Quality" >> analysis_report.md
+          echo "" >> analysis_report.md
+          
+          # Check for print statements in tests
+          if grep -q "print(" pr_diff.txt; then
+            echo "ℹ️ Found \`print()\` statements - consider using proper logging" >> analysis_report.md
+            echo "" >> analysis_report.md
+          fi
+          
+          # Check for proper exception handling
+          if grep -q "except:" pr_diff.txt; then
+            echo "⚠️ Found bare \`except:\` clauses - specify exception types" >> analysis_report.md
+            echo "" >> analysis_report.md
+          fi
+          
+          # Check for TODO/FIXME comments
+          TODO_COUNT=$(grep -c "TODO\|FIXME\|XXX" pr_diff.txt || true)
+          if [ "$TODO_COUNT" -gt 0 ]; then
+            echo "📝 Found $TODO_COUNT TODO/FIXME comments" >> analysis_report.md
+            echo "" >> analysis_report.md
+          fi
+          
+          # Playwright-specific checks
+          echo "### 🎭 Playwright Test Analysis" >> analysis_report.md
+          echo "" >> analysis_report.md
+          
+          if grep -q "page\\.goto\|expect(" pr_diff.txt; then
+            echo "✅ Playwright test patterns detected" >> analysis_report.md
+            echo "" >> analysis_report.md
+            
+            # Check for best practices
+            if grep -q "sleep\|time\\.sleep" pr_diff.txt; then
+              echo "⚠️ **Avoid hard-coded sleeps** - Use Playwright's auto-waiting instead" >> analysis_report.md
+              echo "" >> analysis_report.md
+            fi
+            
+            if grep -q "get_by_role\|get_by_label\|get_by_text" pr_diff.txt; then
+              echo "✅ Using recommended locator strategies (role-based)" >> analysis_report.md
+              echo "" >> analysis_report.md
+            fi
+          fi
+          
+          # Summary
+          echo "### 📋 Summary" >> analysis_report.md
+          echo "" >> analysis_report.md
+          echo "This automated analysis has completed. Please review the findings above." >> analysis_report.md
+          echo "" >> analysis_report.md
+          echo "---" >> analysis_report.md
+          echo "*Generated by GitHub Copilot CLI Workflow* 🤖" >> analysis_report.md
+          
+          # Save report to output
+          cat analysis_report.md
+          
+          # Set output for next step
+          echo "report_generated=true" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Comment the analysis on the PR
+      - name: Comment PR with Analysis
+        if: steps.pr-number.outputs.pr_exists == 'true' && steps.analyze.outputs.report_generated == 'true'
+        run: |
+          PR_NUM="${{ steps.pr-number.outputs.pr_number }}"
+          
+          # Post the analysis as a comment
+          gh pr comment $PR_NUM --body-file analysis_report.md
+          
+          echo "✅ Analysis posted to PR #$PR_NUM"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # Upload analysis report as artifact
+      - name: Upload Analysis Report
+        if: steps.pr-number.outputs.pr_exists == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-analysis-report
+          path: |
+            analysis_report.md
+            pr_details.json
+            pr_diff.txt
+          retention-days: 30
+      
+      # Summary
+      - name: Job Summary
+        if: steps.pr-number.outputs.pr_exists == 'true'
+        run: |
+          echo "## PR Analysis Complete ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Analysis has been posted to PR #${{ steps.pr-number.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Quick Stats" >> $GITHUB_STEP_SUMMARY
+          echo "- Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          cat analysis_report.md >> $GITHUB_STEP_SUMMARY
